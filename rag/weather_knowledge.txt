@@ -1,0 +1,148 @@
+[PROJECT OVERVIEW]
+Project: Intelligent Multi-Modal Weather Intelligence and Climate Decision Support Platform.
+Location: Kochi, Kerala, India.
+Dataset period: 2015–2025.
+Data frequency: Hourly.
+Primary data source: Open-Meteo Historical Weather API.
+
+[DATASET]
+The project contains 96,432 hourly weather records covering Kochi from 1 January 2015 to 31 December 2025.
+
+The raw dataset contains 12 original columns, 0 missing values and 0 duplicate records.
+
+Weather variables include temperature, relative humidity, apparent temperature, precipitation, rain, weather code, surface pressure, cloud cover, wind speed, wind direction and wind gusts.
+
+The processed dataset contains 18 columns and 96,432 records.
+
+The machine-learning dataset contains 96,407 usable records after creating lag features and the next-hour target.
+
+[SEASONS]
+The project uses the following seasonal classification:
+
+Summer: March–May.
+Monsoon: June–September.
+Post-Monsoon: October–November.
+Winter: December–February.
+
+[EXPLORATORY DATA ANALYSIS]
+Kochi temperatures generally remain within a relatively narrow tropical range, with average temperatures around 25–28°C.
+
+The highest average temperatures occur around March and April.
+
+Temperatures tend to be somewhat lower during the monsoon period.
+
+Rainfall shows strong seasonal variation. Some months reach approximately 400–500 mm of accumulated precipitation on average across the available years.
+
+Yearly temperature variation exists across the dataset. The analysis showed relatively higher values in 2024 and lower values in 2022.
+
+[CORRELATION]
+Important correlations observed during exploratory analysis include:
+
+Temperature and relative humidity: approximately -0.79.
+Temperature and apparent temperature: approximately 0.89.
+Wind speed and wind gusts: approximately 0.86.
+Precipitation and rain: approximately 1.00.
+
+[ML TASK]
+The machine-learning component predicts the temperature for the next hour.
+
+Target variable: target_temperature_next_hour.
+
+The model uses current weather variables, temporal variables and historical lag features.
+
+Important lag features include temperature_lag_1, temperature_lag_3, temperature_lag_24 and humidity_lag_1.
+
+[MODEL TRAINING]
+The data was divided chronologically rather than randomly.
+
+Training period: 2015–2023.
+Testing period: 2024–2025.
+
+The chronological split evaluates model performance on future unseen observations.
+
+[MODEL PERFORMANCE]
+Three models were evaluated:
+
+Linear Regression:
+MAE: 0.4029°C.
+RMSE: 0.5616°C.
+R²: 0.9396.
+
+Random Forest:
+MAE: 0.3338°C.
+RMSE: 0.4836°C.
+R²: 0.9552.
+
+XGBoost:
+MAE: 0.3303°C.
+RMSE: 0.4763°C.
+R²: 0.9566.
+
+XGBoost achieved the best overall performance among the evaluated models.
+
+[FEATURE IMPORTANCE]
+The most important features in the trained XGBoost model were:
+
+1. temperature_2m
+2. temperature_lag_24
+3. temperature_lag_1
+4. hour
+5. temperature_lag_3
+6. relative_humidity_2m
+7. precipitation
+8. day_of_year
+9. month
+10. wind_direction_10m
+
+Current temperature was the strongest individual feature, followed by the 24-hour temperature lag and the previous-hour temperature.
+
+[PREDICTION EXAMPLE]
+For the test observation at 2025-01-01 00:00:
+
+Current temperature: 27.40°C.
+Actual next-hour temperature: 26.90°C.
+Predicted next-hour temperature: 26.86°C.
+Absolute error: 0.04°C.
+
+This is an individual test prediction and should not be interpreted as the overall model MAE.
+
+[FASTAPI]
+The trained XGBoost model is exposed through a FastAPI backend.
+
+GET / provides basic information about the Weather Intelligence API.
+
+GET /health checks whether the API and model are available.
+
+POST /predict accepts weather and temporal input features and returns a predicted next-hour temperature.
+
+The API was successfully tested through the FastAPI Swagger interface.
+
+[STREAMLIT]
+A Streamlit dashboard provides an interactive interface for the weather intelligence platform.
+
+The dashboard includes dataset statistics, historical temperature visualization, monthly temperature analysis, monthly precipitation analysis and AI-based next-hour temperature prediction.
+
+The dashboard communicates with the FastAPI prediction service.
+
+[GENAI]
+The GenAI component provides a natural-language interface to the weather intelligence system.
+
+Ollama is used to run a local large language model.
+
+Current local model: Gemma 3 4B.
+
+The GenAI layer combines verified weather knowledge with the machine-learning system so users can ask weather-related questions in natural language.
+
+[RAG]
+The Retrieval-Augmented Generation component retrieves relevant information from the project's weather knowledge base before generating a response.
+
+The purpose is to reduce unsupported answers and ground GenAI responses in the project's actual dataset, analysis and model results.
+
+The knowledge base contains verified project-specific information such as dataset statistics, EDA findings, model performance, feature importance and API functionality.
+
+[LIMITATIONS]
+The XGBoost model currently predicts next-hour temperature only.
+
+It does not directly provide weather probabilities, long-term climate forecasts, disaster predictions, medical recommendations, agricultural recommendations or guaranteed future weather conditions.
+
+GenAI responses should distinguish between verified project results, model predictions and general explanatory information.
